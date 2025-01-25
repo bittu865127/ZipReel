@@ -69,7 +69,7 @@ public class CommandController {
 
 				System.out.println("Enter search Option between title, genre, releaseYear: ");
 				String searchType = scanner.nextLine();
-				System.out.println("Enter '" + searchType + "' Value: ");
+				System.out.println("Enter userId and '" + searchType + "' Value: ");
 				String searchInput = scanner.nextLine();
 				String[] movies = searchInput.split(" ", 2);
 				int userid = movies[0].equals("null") ? null : Integer.valueOf(movies[0]);

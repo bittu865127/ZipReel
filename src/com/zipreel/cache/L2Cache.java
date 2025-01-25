@@ -2,6 +2,7 @@ package com.zipreel.cache;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.zipreel.icache.Cache;
@@ -14,7 +15,7 @@ public class L2Cache implements Cache {
 
 	public L2Cache() {
 		this.cache = new HashMap<>();
-		this.accessCount = new HashMap<>();
+		this.accessCount = new LinkedHashMap<>();
 	}
 
 	@Override
@@ -36,6 +37,17 @@ public class L2Cache implements Cache {
 		}
 		return null; // Not found
 	}
+	
+
+	@Override
+	public Movie get(int userId, String key) {
+		return null;
+	}
+	
+	@Override
+	public Movie get(int userId, String genre, int releaseYear, Double minRating) {
+		return null;
+}
 
 	@Override
 	public void remove(int userId, int movieId) {
@@ -54,11 +66,5 @@ public class L2Cache implements Cache {
 		int leastUsedKey = Collections.min(accessCount.entrySet(), Map.Entry.comparingByValue()).getKey();
 		cache.remove(leastUsedKey);
 		accessCount.remove(leastUsedKey);
-	}
-
-	@Override
-	public Movie get(int userId, String key) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

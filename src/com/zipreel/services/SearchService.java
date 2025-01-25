@@ -25,21 +25,24 @@ public class SearchService implements ISearchService {
 		if (title == null || title.trim().isEmpty()) {
 			throw new IllegalArgumentException("Title cannot be null or empty");
 		}
-		
-		List<Movie> cachedResults = new ArrayList<>();
-        Movie cachedMovie = l1Cache.get(userId, title);
-        if (cachedMovie != null) {
-            cachedResults.add(cachedMovie);
-            return cachedResults; // Return cached result
-        }
 
-        // Check L2 Cache
-        cachedMovie = l2Cache.get(userId, title);
-        if (cachedMovie != null) {
-            l1Cache.put(userId, cachedMovie); // Update L1 Cache
-            cachedResults.add(cachedMovie);
-            return cachedResults; // Return cached result
-        }
+		List<Movie> cachedResults = new ArrayList<>();
+		Movie cachedMovie = l1Cache.get(userId, title);
+		if (cachedMovie != null) {
+			cachedResults.add(cachedMovie);
+			System.out.println("List of filtered movies with cache level indicator: L1 Cache");
+			return cachedResults; // Return cached result
+		}
+
+		System.out.println();
+		// Check L2 Cache
+		cachedMovie = l2Cache.get(userId, title);
+		if (cachedMovie != null) {
+			l1Cache.put(userId, cachedMovie); // Update L1 Cache
+			cachedResults.add(cachedMovie);
+			System.out.println("List of filtered movies with cache level indicator: L2 Cache");
+			return cachedResults; // Return cached result
+		}
 
 		List<Movie> results = new ArrayList<>();
 
@@ -47,7 +50,7 @@ public class SearchService implements ISearchService {
 			if (movie != null && movie.getTitle() != null && movie.getTitle().equalsIgnoreCase(title)) {
 				results.add(movie);
 				l1Cache.put(userId, movie); // Update L1 Cache
-                l2Cache.put(userId, movie); // Update L2 Cache
+				l2Cache.put(userId, movie); // Update L2 Cache
 			}
 		}
 
@@ -57,16 +60,6 @@ public class SearchService implements ISearchService {
 		return results;
 	}
 
-	/*
-	 * @Override public List<Movie> searchByTitle(String title) throws
-	 * MovieNotFoundException { List<Movie> results = new ArrayList<>(); for (Movie
-	 * movie : MovieService.movieDatabase.values()) { if
-	 * (movie.getTitle().equalsIgnoreCase(title)) { results.add(movie); } } if
-	 * (results.isEmpty()) { throw new
-	 * MovieNotFoundException("No movies found with title: " + title); } return
-	 * results; }
-	 */
-
 	@Override
 	public List<Movie> searchByGenre(int userId, String genre) throws MovieNotFoundException {
 
@@ -75,27 +68,29 @@ public class SearchService implements ISearchService {
 		}
 
 		List<Movie> cachedResults = new ArrayList<>();
-        Movie cachedMovie = l1Cache.get(userId, genre);
-        if (cachedMovie != null) {
-            cachedResults.add(cachedMovie);
-            return cachedResults; // Return cached result
-        }
+		Movie cachedMovie = l1Cache.get(userId, genre);
+		if (cachedMovie != null) {
+			cachedResults.add(cachedMovie);
+			System.out.println("List of filtered movies with cache level indicator: L1 Cache");
+			return cachedResults; // Return cached result
+		}
 
-        // Check L2 Cache
-        cachedMovie = l2Cache.get(userId, genre);
-        if (cachedMovie != null) {
-            l1Cache.put(userId, cachedMovie); // Update L1 Cache
-            cachedResults.add(cachedMovie);
-            return cachedResults; // Return cached result
-        }
-        
+		// Check L2 Cache
+		cachedMovie = l2Cache.get(userId, genre);
+		if (cachedMovie != null) {
+			l1Cache.put(userId, cachedMovie); // Update L1 Cache
+			cachedResults.add(cachedMovie);
+			System.out.println("List of filtered movies with cache level indicator: L2 Cache");
+			return cachedResults; // Return cached result
+		}
+
 		List<Movie> results = new ArrayList<>();
 
 		for (Movie movie : MovieService.movieDatabase.values()) {
 			if (movie != null && movie.getGenre() != null && movie.getGenre().equalsIgnoreCase(genre)) {
 				results.add(movie);
 				l1Cache.put(userId, movie); // Update L1 Cache
-                l2Cache.put(userId, movie);
+				l2Cache.put(userId, movie);
 			}
 		}
 		if (results.isEmpty()) {
@@ -106,30 +101,33 @@ public class SearchService implements ISearchService {
 
 	@Override
 	public List<Movie> searchByReleaseYear(int userId, int year) throws MovieNotFoundException {
-		
-		if (year<0) {
+
+		if (year < 0) {
 			throw new IllegalArgumentException("Title cannot be null or empty");
 		}
-		
+
 		List<Movie> cachedResults = new ArrayList<>();
-        Movie cachedMovie = l1Cache.get(userId, year);
-        if (cachedMovie != null) {
-            cachedResults.add(cachedMovie);
-            return cachedResults; // Return cached result
-        }
+		Movie cachedMovie = l1Cache.get(userId, year);
+		if (cachedMovie != null) {
+			cachedResults.add(cachedMovie);
+			System.out.println("List of filtered movies with cache level indicator: L1 Cache");
+			return cachedResults; // Return cached result
+		}
 
-        // Check L2 Cache
-        cachedMovie = l2Cache.get(userId, year);
-        if (cachedMovie != null) {
-            l1Cache.put(userId, cachedMovie); // Update L1 Cache
-            cachedResults.add(cachedMovie);
-            return cachedResults; // Return cached result
-        }
+		// Check L2 Cache
+		cachedMovie = l2Cache.get(userId, year);
+		if (cachedMovie != null) {
+			l1Cache.put(userId, cachedMovie); // Update L1 Cache
+			cachedResults.add(cachedMovie);
+			System.out.println("List of filtered movies with cache level indicator: L2 Cache");
+			return cachedResults; // Return cached result
+		}
 
-        
 		List<Movie> results = new ArrayList<>();
 		for (Movie movie : MovieService.movieDatabase.values()) {
 			if (movie.getReleaseYear() == year) {
+				l1Cache.put(userId, movie); // Update L1 Cache
+				l2Cache.put(userId, movie);
 				results.add(movie);
 			}
 		}
@@ -159,9 +157,14 @@ public class SearchService implements ISearchService {
 				matches = false;
 			}
 
-			if (matches) {
-				results.add(movie);
+			List<Movie> cachedResults = new ArrayList<>();
+			Movie cachedMovie = l1Cache.get(userId, genre, releaseYear, minRating);
+			if (cachedMovie != null) {
+				cachedResults.add(cachedMovie);
+				System.out.println("List of filtered movies with cache level indicator: L1 Cache");
+				return cachedResults; // Return cached result
 			}
+
 		}
 		if (results.isEmpty()) {
 			throw new MovieNotFoundException("No movies found matching the given criteria.");

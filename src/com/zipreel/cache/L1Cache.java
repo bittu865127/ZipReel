@@ -58,6 +58,43 @@ public class L1Cache implements Cache {
 	}
 
 	@Override
+	public Movie get(int userId, String genre, int releaseYear, Double minRating) {
+		// TODO Auto-generated method stub
+		LinkedHashMap<Integer, Movie> movies = userCache.get(userId);
+		if (movies != null) {
+			// Iterate through the movies to find a match based on the provided parameters
+			for (Movie movie : movies.values()) {
+				boolean matches = true;
+
+				// Check genre
+				if (genre != null && !movie.getGenre().equalsIgnoreCase(genre)) {
+					matches = false;
+				}
+
+				// Check release year
+				if (releaseYear >= 0 && movie.getReleaseYear() != releaseYear) {
+					matches = false;
+				}
+
+				// Check minimum rating
+				if (minRating != null && movie.getRating() < minRating) {
+					matches = false;
+				}
+
+				// If all criteria match, return the movie
+				if (matches) {
+					// Move the accessed movie to the end to mark it as recently used
+					movies.remove(movie.getMovieId()); // Assuming movieId is the key
+					movies.put(movie.getMovieId(), movie); // Reinsert to mark as recently used
+					return movie;
+				}
+			}
+
+		}
+		return null;
+	}
+
+	@Override
 	public void remove(int userId, int movieId) {
 		LinkedHashMap<Integer, Movie> movies = userCache.get(userId);
 		if (movies != null) {

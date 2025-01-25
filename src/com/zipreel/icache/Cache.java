@@ -6,13 +6,16 @@ public interface Cache {
 
 	void evict(int userId);
 
-	void put(int userId,Movie movie);
+	void put(int userId, Movie movie);
 
-	Movie get(int userId,int movieId);
-	
-	Movie get(int userId,String key);
+	Movie get(int userId, int movieId);
 
-	void remove(int userId,int movieId);
+	Movie get(int userId, String key);
 
-	boolean contains(int userId,int movieId);
+	Movie get(int userId, String genre, int releaseYear, Double minRating);
+
+	void remove(int userId, int movieId);
+
+	boolean contains(int userId, int movieId);
+
 }
